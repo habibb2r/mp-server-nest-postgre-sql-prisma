@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { LogInDto } from './auth-dto/auth-dto';
 import { DatabaseService } from 'src/database/database.service';
 
@@ -6,11 +6,16 @@ import { DatabaseService } from 'src/database/database.service';
 export class AuthService {
   constructor(private readonly databaseService: DatabaseService) {}
   async signin(loginData: LogInDto) {
-    return this.databaseService.user.findUnique({
+    const user = await this.databaseService.user.findUnique({
       where: {
         email: loginData.email,
         password: loginData.password,
       },
     });
+    if (!user)
+      throw new NotFoundException(
+        'Failed to login, Give correct email and password',
+      );
+    return 'Logged in successfully';
   }
 }

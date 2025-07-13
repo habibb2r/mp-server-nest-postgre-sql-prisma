@@ -1,5 +1,6 @@
 import { Optional } from '@nestjs/common';
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
 
 export class SignUpDto {
   @IsNotEmpty()
@@ -21,3 +22,5 @@ export class SignUpDto {
   })
   role: 'admin' | 'user' | 'seller';
 }
+
+export class UpdateUserDto extends PartialType(SignUpDto) {}
