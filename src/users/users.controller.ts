@@ -6,9 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { SignUpDto, UpdateUserDto } from './usersDto/users-dto';
+import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -24,6 +26,7 @@ export class UsersController {
     return this.userService.create(signUpDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   getSingleUser(@Param('id') id: string) {
     return this.userService.getSingleUser(+id);
