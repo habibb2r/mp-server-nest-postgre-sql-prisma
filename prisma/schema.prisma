@@ -16,19 +16,134 @@ datasource db {
 
 
 
-enum Role {
-  admin
-  seller
-  user
+// Enums (optional but recommended)
+enum UserRole {
+  ADMIN
+  SELLER
+  USER
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+
+// ==============================
+// 5. User Model
+// ==============================
 model User {
-  id  Int @id @default(autoincrement())
-  name String
-  email String @unique
-  password String 
-  role  Role
-  picture String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  }
+  user_id             Int        @id @default(autoincrement())
+  email          String     @unique
+  password       String 
+  name           String
+  picture        String?    // Profile picture URL
+  role           UserRole
+  createdDate    DateTime
+  dob            DateTime?
+  gender         Gender?
+  phone          String?
+  preferredTime  String?
+  darkMode       Boolean    @default(false)
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+
+
+// ==============================
+// 1. Stall Model
+// ==============================
+model Stall {
+  stall_id          Int         @id @default(autoincrement())
+  name        String
+  type        String
+
+  products    Product[]
+  cartItems   CartItem[]
+  bookings    StallBooking[]
+}
+
+// ==============================
+// 2. Product Model
+// ==============================
+model Product {
+  p_id              Int      @id @default(autoincrement())
+  productName     String
+  productImage    String
+  productCategory String
+
+  productRating   Int      @default(0)
+  totalRated      Int      @default(0)
+
+  previousPrice   Int
+  presentPrice    Int
+  discount        Boolean  @default(false)
+
+  description     String?  // Optional long description
+  material        String
+  sizeDescription String
+  colors          String
+  style           String
+
+  quantity        Int      @default(0)
+
+  stall_id         Int
+  stall           Stall    @relation(fields: [stall_id], references: [stall_id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==============================
+// 3. Cart Item Model
+// ==============================
+model CartItem {
+  cart_id            Int      @id @default(autoincrement())
+  userEmail     String
+  productId     String    // ObjectId string from MongoDB
+  productName   String
+  productImage  String
+  price         Int
+  stallName     String
+  rating        Int       @default(0)
+
+  stall_id       Int
+  stall         Stall     @relation(fields: [stall_id], references: [stall_id])
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ==============================
+// 4. Stall Booking Model
+// ==============================
+model StallBooking {
+  id            Int      @id @default(autoincrement())
+  email         String
+  name          String
+  date          DateTime
+  time          String
+
+  stallQuality  String
+  price         Int
+
+  stallName     String
+  stallType     String
+  stall_id       Int
+
+  rated         Int      @default(0)
+  totalRated    Int      @default(0)
+
+  duration      Int
+  maxCategory   Int
+  shopSize      Int
+
+  stall         Stall     @relation(fields: [stall_id], references: [stall_id])
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
